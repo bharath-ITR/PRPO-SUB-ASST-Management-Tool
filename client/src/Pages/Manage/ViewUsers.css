@@ -1,0 +1,165 @@
+
+.view-users-container {
+    padding: 15px;
+    font-family: Arial, sans-serif;
+  }
+
+  .view-users-heading {
+    color: #333;
+    margin-top: 70px;
+    text-align: center;
+}
+  
+ 
+  .view-users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .view-users-table thead {
+    background-color: #195faa;
+  }
+  
+  .view-users-header {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    color: #ffffff;
+  }
+  
+  .view-users-row:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .view-users-cell {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  
+  .view-users-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .view-users-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .view-users-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+
+  .view-users-error {
+    color: red;
+  }
+  
+  .view-users-no-data {
+    text-align: center;
+    font-style: italic;
+  }
+
+
+.edit-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .edit-form1 {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+  }
+  
+  .edit-form1 h3 {
+    margin-bottom: 20px;
+  }
+  
+  .edit-form1 label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .edit-form1 input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .edit-form1 button {
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .edit-form1 button[type="button"] {
+    background-color: #6c757d;
+  }
+  
+  .edit-form1 button:hover {
+    opacity: 0.9;
+  }
+  
+  .delete-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .delete-popup p {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .delete-popup button {
+    margin: 5px;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #dc3545;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .delete-popup button:hover {
+    opacity: 0.9;
+  }
+  
+  .delete-popup button:nth-child(2) {
+    background-color: #6c757d;
+  }
+  

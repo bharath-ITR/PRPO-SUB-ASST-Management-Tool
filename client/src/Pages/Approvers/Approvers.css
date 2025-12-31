@@ -1,0 +1,355 @@
+.approver {
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  position: relative;
+  margin-top: 50px;
+  background-color: whitesmoke;
+}
+
+.middleData {
+  margin-left: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.filterDate {
+  width: 75px;
+  padding-right: 5px;
+  height: 41px;
+  background: rgb(216, 226, 236);
+
+}
+
+.filterDate p {
+  font-size: 12px;
+  text-align: end;
+}
+
+.calenders {
+  display: flex;
+  align-items: center;
+  background: rgb(216, 226, 236);
+}
+
+.calenders input[type='date'] {
+  padding: 5px 10px;
+  border: 1px solid rgb(224, 217, 217);
+  height: 30px;
+  width: 120px;
+}
+
+.heading_wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.heading_wrapper input[type='text'] {
+  width: 250px;
+  padding: 5px 5px 5px 10px;
+  border: 1px solid rgb(224, 217, 217);
+  height: 30px;
+}
+
+.approver_heading {
+  margin-left: 20px;
+  font-size: 20px;
+  font-weight: 500;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: rgb(86, 94, 101)
+}
+
+.approver-table .disabled-row {
+  background-color: #f0f0f0;
+  color: #a0a0a0;
+  background-color: rgb(255, 213, 213);
+
+}
+
+.approver-table .disabled-row td {
+  background-color: rgb(255, 213, 213);
+
+}
+
+
+.request_wrapper {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+}
+
+.pending {
+  background-color: #91907A;
+  color: white;
+  text-transform: capitalize;
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.approved {
+  background-color: rgb(58, 163, 58);
+  color: white;
+  text-transform: capitalize;
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.in {
+  background-color: #e97e20;
+  color: white;
+  text-transform: capitalize;
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.processing {
+  background-color: #EDBA22;
+  color: white;
+  text-transform: capitalize;
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+}
+
+.rejected {
+  background-color: #ee6d64;
+  color: white;
+  text-transform: capitalize;
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+}
+
+.Ready {
+  background-color: rgb(58, 163, 58);
+
+  color: white;
+  text-transform: capitalize;
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+}
+
+.completed {
+  background-color: rgb(28, 203, 142);
+  color: white;
+  text-transform: capitalize;
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.icon-cell {
+  border: none;
+  outline: none;
+}
+
+.details_container {
+  display: flex;
+  width: 101.5%;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.attachments-container-parent {
+  height: 150px;
+  margin-top: -40px;
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.attachments-container {
+  width: 100%;
+  height: 90%;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.attachments-container button {
+  font-stretch: condensed;
+  width: 20%;
+  height: 40%;
+  background-color: rgb(7 89 133);
+  border-radius: 5px;
+  border: none;
+  color: snow;
+  padding: 5px 0px 5px 0;
+  cursor: pointer;
+}
+
+.data_wrapper {
+  width: 100%;
+
+}
+
+.data_wrapper_items {
+  width: 50%;
+  height: 60%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.left_items_wrapper,
+.right_items_wrapper {
+  border: 1px solid #dedada;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  height: 34px;
+}
+
+.left_items_wrapper p,
+.right_items_wrapper p {
+  font-size: 13px;
+  font-weight: 600;
+  margin-right: 10px
+}
+
+
+.Btn_wrappers button {
+  background-color: orange;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 3px;
+  color: white;
+  padding: 5px 20px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.Btn_wrappers button:hover {
+  background-color: darkorange;
+  transform: scale(1.05);
+}
+
+.Btn_wrappers button:active {
+  background-color: orangered;
+  transform: scale(0.95);
+}
+
+.closeIcon {
+  margin-left: 32vw;
+  position: relative;
+  margin-top: -10px;
+  top: 0;
+  left: 10;
+  background-color: rgb(232, 44, 44);
+  color: white;
+  border-radius: 30px;
+}
+
+.closeIcon:hover {
+  cursor: pointer;
+  background-color: red;
+  transform: scale(0.95);
+
+}
+
+.commentBox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200vh;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.comment_Wrapper {
+  background-color: #fdfdfd;
+  width: 35%;
+  height: 55%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.button_btns {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: -10px;
+}
+
+
+.button_btns button:nth-child(1),
+.approve_button {
+  background-color: rgb(4, 120, 4);
+  color: white;
+  text-transform: capitalize;
+  padding: 7px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 80px;
+  font-size: 14px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+}
+
+.button_btns button:nth-child(2) {
+  background-color: #da1b0e;
+  color: white;
+  text-transform: capitalize;
+  padding: 7px 15px;
+  border-radius: 5px;
+  border: none;
+  width: 80px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+}
+
+
+.actionButton {
+  position: fixed;
+  top: 104px;
+  right: 0px;
+  padding: 15px 78px;
+  background-color: #2db654;
+  color: white;
+  border: none;
+  border-radius: 15px 0 0 15px;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 9999;
+}
+
+
+.actionButton:hover {
+  background-color: #00b35c;
+}

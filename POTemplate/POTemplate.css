@@ -1,0 +1,81 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+    color: #333;
+}
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+.header img {
+    max-height: 80px;
+}
+.header .title {
+    text-align: center;
+}
+.info-section {
+    margin-bottom: 20px;
+}
+.info-section div {
+    margin-bottom: 10px;
+}
+.info-section div strong {
+    display: block;
+    margin-bottom: 5px;
+}
+.details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+.details-table th, .details-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+.details-table th {
+    background-color: #000;
+    color:#fff;
+}
+.totals {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+.totals div {
+    width: 200px;
+    text-align: right;
+}
+.totals div strong {
+    display: block;
+}
+.footer {
+    text-align: right;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    margin-top: 20px;
+}
+.info-grid {
+    display: flex;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.quotation-details {
+    display: block;
+    line-height: 30px;
+}
+.total-gst {
+    display: block;
+    line-height: 30px;
+}

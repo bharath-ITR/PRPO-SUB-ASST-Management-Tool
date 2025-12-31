@@ -1,0 +1,73 @@
+
+
+
+
+name: Build and deploy Node.js fullstack app to Azure Web App - PrPoWebQuality
+
+on:
+  push:
+    branches:
+      - Quality-dev
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.x'
+
+      # Install and build frontend
+      - name: Install and build frontend
+        run: |
+          cd client
+          npm install
+          CI=false REACT_APP_API=https://prpowebquality-d5dfapbubcatdagd.centralindia-01.azurewebsites.net npm run build
+   
+      - name: Install backend dependencies
+        run: |
+          npm install
+
+      # Upload fullstack app (backend code only, no node_modules)
+      - name: Upload fullstack app
+        uses: actions/upload-artifact@v4
+        with:
+          name: fullstack-app
+          path: |
+            client/build
+            Controllers
+            Middleware
+            Models
+            POTemplate
+            Routes
+            Token
+            package.json
+            package-lock.json
+            server.js
+            Database.js
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download fullstack app
+        uses: actions/download-artifact@v4
+        with:
+          name: fullstack-app
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'PrPoWebQuality'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6FCAADDB3D91402AACE6357A583C319C }}
+          package: .
+

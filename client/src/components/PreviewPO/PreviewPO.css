@@ -1,0 +1,32 @@
+.preview-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    width: 80vw;
+    max-width: 1000px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .preview-table-wrapper {
+    margin: 20px 0;
+  }
+  
+  .preview-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .preview-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+  }
+  

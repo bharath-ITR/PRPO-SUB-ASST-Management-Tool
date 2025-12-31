@@ -1,0 +1,277 @@
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 200px;
+  z-index: 1;
+  width: calc(100% - 200px);
+  height: 40px;
+  background: #f2f4f7;
+  transition: left 0.5s, width 0.5s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar.navbar-off {
+  left: 90px;
+  width: calc(100% - 90px);
+}
+
+.navbar_wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.animate-charcter {
+  margin-left: 20px;
+  font-size: 20px;
+  color: #273272
+}
+
+.profileContainer {
+  position: fixed;
+  top: -10px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profileContainer p {
+  font-size: 20px;
+  color: #273272;
+  font-weight: 500;
+
+}
+
+.profileImage {
+  color: white;
+  height: 40px;
+  padding: 5px;
+  cursor: pointer;
+  object-fit: cover;
+  border-radius: 50px;
+}
+
+.cancel {
+  position: relative;
+}
+
+.profile_wrapper {
+  width: 320px;
+  height: auto;
+  position: absolute;
+  top: 60px;
+  right: 30px;
+  border-radius: 10px;
+  background-color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  padding: 20px;
+}
+
+.profile_data {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.profile_data_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  background-color: whitesmoke;
+
+}
+
+.profile_data_wrapper p {
+  margin: 0;
+  flex-grow: 1;
+  padding-right: 10px;
+
+}
+
+.close_icon_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  margin-top: -15px;
+  margin-right: -14px;
+}
+
+.closeIcons {
+  background-color: red;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0px;
+  font-size: 20px;
+}
+
+.userProfile {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #00e946;
+  margin-top: 10px;
+  align-self: center;
+  object-fit: cover;
+}
+
+.btn-danger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.Btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition-duration: .3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+  background-color: rgb(255, 65, 65);
+}
+
+
+.sign {
+  width: 100%;
+  transition-duration: .3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sign svg {
+  width: 20px;
+}
+
+.sign svg path {
+  fill: white;
+}
+
+.text {
+  position: absolute;
+  right: 0%;
+  width: 0%;
+  opacity: 0;
+  color: white;
+  font-size: 1.2em;
+  font-weight: 600;
+  transition-duration: .3s;
+}
+
+.Btn:hover {
+  width: 125px;
+  border-radius: 40px;
+  gap: 10px;
+  transition-duration: .3s;
+}
+
+.Btn:hover .sign {
+  width: 12%;
+  transition-duration: .3s;
+  padding-left: 20px;
+}
+
+.Btn:hover .text {
+  opacity: 1;
+  width: 70%;
+  transition-duration: .3s;
+  padding-right: 10px;
+}
+
+.Btn:active {
+  transform: translate(2px, 2px);
+}
+
+
+.forgetBtn {
+
+  margin-top: 10px;
+  font-size: 16px;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.forget {
+  width: 100%;
+  background-color: whitesmoke;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.forget_wrappers {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.forget_wrappers div{
+  width:100%;
+  margin-bottom: 10px;
+}
+.forget_wrappers input {
+  border: 1px solid #ccc;
+  width: 100%;
+  height: 35px;
+  border-radius: 15px;
+  padding-left: 10px;
+}
+.form_wrapper{
+  width:100%;
+}
+.continue-btn-change {
+    margin-left: 7px;
+}
+
+
+.continue-btn-change > button {
+  width: 100%;
+  border: 1px solid rgb(255, 65, 65);
+  padding: 10px 2px;
+  color: rgb(255, 65, 65);
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.continue-btn-change>button:hover {
+  background-color: rgb(255, 65, 65);
+  color: #fff;
+}
+
+
+.greeting {
+  font-size: 20px;
+  color: rgb(86, 94, 101);
+  font-weight: 700;
+}

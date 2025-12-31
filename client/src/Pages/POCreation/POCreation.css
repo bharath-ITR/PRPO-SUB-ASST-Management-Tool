@@ -1,0 +1,19 @@
+.pocreation {
+    width: 100%;
+    height: 250vh;
+    background-color: whitesmoke;
+    overflow: hidden;
+}
+
+.pocreation_wrapper {
+ width: 100%;
+ height: 100%;  
+ 
+}
+form>input {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    width: 100%;
+
+}

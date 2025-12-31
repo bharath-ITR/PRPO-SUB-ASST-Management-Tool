@@ -1,0 +1,42 @@
+.monthly-status-graphs {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 20px;
+}
+
+.chart {
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    flex-grow: 1; 
+    max-width: 300px; 
+    min-width: 300px; 
+    height: 270px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.pending-approval-chart {
+    background-color: #f5faff;
+}
+
+.in-process-chart {
+    background-color: #f5faff;
+}
+
+.processing-chart {
+    background-color: #f5faff;
+}
+
+.chart h3 {
+    margin-bottom: 5px; 
+    text-align: center; 
+}
+
+.chart canvas {
+    flex-grow: 1;
+}

@@ -1,0 +1,7 @@
+node_modules
+.env
+package-lock.json
+attachment
+Database2.js
+pdfs
+.github/workflows/Production.yml

@@ -1,0 +1,185 @@
+.home {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -40px;
+    margin-bottom: 10px;
+}
+ 
+.home_wrapper {
+    width: 100%;
+    max-width:800px;
+    margin: 0 auto;
+}
+
+.truncate-dropdown .MuiSelect-select {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-top: 100px;
+}
+ 
+.form_wrapper {
+    width: 80%;
+}
+ 
+.input-field-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+ 
+.input-field {
+    width:100%;
+   
+}
+ 
+.location{
+    width: 100%;
+    border-radius: 10px;
+    padding:15px 10px 15px 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+ 
+.product,.payment {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+    border-radius: 10px;
+    padding:20px 15px 20px 15px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+ 
+.upload{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+    border-radius: 10px;
+    padding:15px 10px 17px 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+ 
+}
+ 
+.approvers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+    border-radius: 10px;
+    padding:25px 15px 20px 15px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    overflow: hidden;
+}
+ 
+.submitBtn {
+    border: none;
+    outline: none;
+    background-color: rgb(80, 158, 207);
+    color: white;
+    padding: 15px 30px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+ 
+ 
+@media (max-width: 768px) {
+    .home {
+        width: 100%;
+        height: 200vh;
+    }
+ 
+    .home_wrapper {
+        width: 95%;
+        max-width: none;
+    }
+ 
+    .form {
+        gap: 15px;
+    }
+ 
+    .input-field-wrapper {
+        gap: 15px;
+    }
+ 
+    .submitBtn {
+        padding: 12px 25px;
+    }
+ 
+    .product {
+        grid-template-columns: repeat(2, 1fr);;
+        gap: 20px;
+    }
+}
+ 
+ 
+@media (max-width: 480px) {
+    .home {
+        width: 100%;
+        height: 320vh;
+    }
+ 
+    .home_wrapper {
+        width: 100%;
+    }
+ 
+    .form {
+        gap: 10px;
+    }
+ 
+    .input-field-wrapper {
+        gap: 10px;
+    }
+ 
+    .input-field {
+        width: 90%;
+        padding-left: 20px;
+    }
+    .payment{
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 20px;
+        width: 100%;
+    }
+    .upload{
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 50px;
+        width: 100%;
+    }
+    .submitBtn {
+        padding: 10px 20px;
+    }
+ 
+    .product {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .approvers {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+ 
+ 
+}
+ 
+ 
+
+
+
+
+  

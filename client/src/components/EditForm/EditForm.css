@@ -1,0 +1,113 @@
+.edit-form {
+    width: 50%;
+    height: 90%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.edit_form_wrapper {
+    height: 100%;
+}
+
+.edit_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    background-color: rgb(8, 59, 92);
+    margin-bottom: 10px;
+    border-radius: 10px 10px 0 0;
+}
+
+.edit_header_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    height: 50px;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.edit_header_wrapper p {
+    font-size: 19px;
+    font-weight: 600;
+}
+
+.close_button {
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.textField {
+    width: 95%;
+    margin-left: 25px;
+}
+.dropdown{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 20px;
+
+}
+
+.textField_wrapper {
+    margin-top: 10px;
+    display: flex;
+    width: 100%;
+
+    gap: 20px;
+    flex-wrap: wrap;
+  
+}
+.input-group {
+    border: none;
+    width: 100%; 
+    padding-top: 10p;
+    min-height: 30px; 
+    max-height: 100px; 
+    overflow-y: auto; 
+    /* resize: both;  */
+    font-size: 11px;
+    line-height: 15px;
+}
+
+
+
+.Action_submit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: rgb(7, 7, 7);
+    outline: none;
+    background-color: rgb(255, 255, 255);
+    padding: 10px 30px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 20%;
+    height: 15px;
+    margin:20px 0 0 200px ;
+}
+
+.attachment-preview a {
+    display: inline-block;
+    margin: 10px;
+    color: rgb(10, 10, 174);
+    text-decoration: none;
+
+}
+
+.attachment-preview a:hover {
+    text-decoration: underline;
+}
+
