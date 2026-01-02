@@ -42,7 +42,10 @@ const subscriptionSchema = new mongoose.Schema(
     },
     dueDate: String,
     status: String,
-
+    owner: {
+      email: String,
+      name: String
+    },
     notes: String,
 
     description: String,

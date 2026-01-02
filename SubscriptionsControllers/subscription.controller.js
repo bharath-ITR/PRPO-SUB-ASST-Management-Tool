@@ -1,6 +1,11 @@
 import Subscription from "../SubscriptionsModels/Subscription.js";
 import fs from "fs";
 import path from "path";
+import { 
+  sendSubscriptionActionNotification,
+  sendSubscriptionRenewalReminder,
+  sendEmail
+} from "../SubscriptionsServices/email.service.js";
 
 
 // helper
@@ -93,6 +98,15 @@ export const renewSubscription = async (req, res, next) => {
     sub.notificationsEnabled = true;
 
     await sub.save();
+    
+    // Send email notification
+    try {
+      await sendSubscriptionActionNotification(sub, "renewed");
+    } catch (emailError) {
+      console.error("Failed to send renewal email:", emailError);
+      // Don't fail the request if email fails
+    }
+    
     res.json(sub);
   } catch (err) {
     next(err);
@@ -110,6 +124,15 @@ export const pauseSubscription = async (req, res, next) => {
     sub.notificationsEnabled = false;
 
     await sub.save();
+    
+    // Send email notification
+    try {
+      await sendSubscriptionActionNotification(sub, "paused");
+    } catch (emailError) {
+      console.error("Failed to send pause email:", emailError);
+      // Don't fail the request if email fails
+    }
+    
     res.json(sub);
   } catch (err) {
     next(err);
@@ -126,6 +149,15 @@ export const cancelSubscription = async (req, res, next) => {
     sub.notificationsEnabled = false;
 
     await sub.save();
+    
+    // Send email notification
+    try {
+      await sendSubscriptionActionNotification(sub, "cancelled");
+    } catch (emailError) {
+      console.error("Failed to send cancellation email:", emailError);
+      // Don't fail the request if email fails
+    }
+    
     res.json(sub);
   } catch (err) {
     next(err);
@@ -152,6 +184,15 @@ export const resumeSubscription = async (req, res, next) => {
     });
 
     await sub.save();
+    
+    // Send email notification
+    try {
+      await sendSubscriptionActionNotification(sub, "resumed");
+    } catch (emailError) {
+      console.error("Failed to send resume email:", emailError);
+      // Don't fail the request if email fails
+    }
+    
     res.json(sub);
   } catch (err) {
     next(err);
@@ -379,6 +420,167 @@ export const deleteSubscriptionFile = async (req, res, next) => {
     res.json(sub);
   } catch (err) {
     next(err);
+  }
+};
+
+// ---------------- TEST EMAIL ---------------- 
+export const testEmail = async (req, res, next) => {
+  try {
+    const { email, type } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ 
+        message: "Email address is required",
+        example: { email: "test@example.com", type: "simple|renewal|action" }
+      });
+    }
+
+    let result;
+
+    if (type === "renewal") {
+      // Test renewal reminder email
+      const testSubscription = {
+        name: "Test Subscription",
+        vendor: "Test Vendor",
+        billingCycle: "Monthly",
+        cost: 1000,
+        costCurrency: "₹",
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days from now
+        status: "ACTIVE",
+        owner: {
+          email: email,
+          name: "Test User"
+        }
+      };
+      result = await sendSubscriptionRenewalReminder(testSubscription, 7, [email]);
+    } else if (type === "action") {
+      // Test action notification email
+      const testSubscription = {
+        name: "Test Subscription",
+        vendor: "Test Vendor",
+        billingCycle: "Monthly",
+        cost: 1000,
+        costCurrency: "₹",
+        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        status: "ACTIVE",
+        owner: {
+          email: email,
+          name: "Test User"
+        }
+      };
+      result = await sendSubscriptionActionNotification(testSubscription, "renewed", [email]);
+    } else {
+      // Simple test email - Outlook-compatible
+      const htmlBody = `
+        <!DOCTYPE html>
+        <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <!--[if mso]>
+          <noscript>
+            <xml>
+              <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+              </o:OfficeDocumentSettings>
+            </xml>
+          </noscript>
+          <![endif]-->
+          <style type="text/css">
+            body { margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4; }
+            table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+            .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
+          </style>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f4;">
+            <tr>
+              <td align="center" style="padding: 20px 0;">
+                <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+                  <!-- Header -->
+                  <tr>
+                    <td style="background-color: #667eea; padding: 30px 20px; text-align: center;">
+                      <h2 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: bold;">✅ Test Email Successful!</h2>
+                    </td>
+                  </tr>
+                  <!-- Content -->
+                  <tr>
+                    <td style="padding: 30px 20px; background-color: #ffffff;">
+                      <p style="margin: 0 0 15px 0; font-size: 16px; color: #333333; line-height: 1.6;">Dear User,</p>
+                      <p style="margin: 0 0 20px 0; font-size: 16px; color: #333333; line-height: 1.6;">This is a test email from the Subscriptions & Assets Management System.</p>
+                      
+                      <!-- Success Box -->
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #d4edda; border-left: 4px solid #28a745; margin: 20px 0;">
+                        <tr>
+                          <td style="padding: 20px;">
+                            <p style="margin: 0; font-size: 16px; color: #155724; line-height: 1.6;">
+                              <strong>✅ Email Configuration Working:</strong> If you received this email, your AWS SES configuration is correct and emails are being sent successfully.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <p style="margin: 20px 0 10px 0; font-size: 16px; color: #333333; line-height: 1.6;"><strong>Test Details:</strong></p>
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 10px 0;">
+                        <tr>
+                          <td style="padding: 5px 0; font-size: 14px; color: #333333;">• Recipient: ${email}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 5px 0; font-size: 14px; color: #333333;">• Sent at: ${new Date().toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 5px 0; font-size: 14px; color: #333333;">• Type: Simple Test Email</td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <!-- Footer -->
+                  <tr>
+                    <td style="padding: 20px; background-color: #f9f9f9; text-align: center;">
+                      <p style="margin: 0 0 5px 0; font-size: 12px; color: #777777;">This is an automated test notification.</p>
+                      <p style="margin: 0; font-size: 12px; color: #777777;">Please do not reply to this email.</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const textBody = `
+Test Email Successful!
+
+This is a test email from the Subscriptions & Assets Management System.
+
+If you received this email, your AWS SES configuration is correct.
+
+Test Details:
+- Recipient: ${email}
+- Sent at: ${new Date().toLocaleString()}
+- Type: Simple Test Email
+      `;
+
+      result = await sendEmail(email, "Test Email - Subscriptions & Assets Management System", htmlBody, textBody);
+    }
+
+    res.json({
+      success: true,
+      message: "Test email sent successfully",
+      result,
+      recipient: email,
+      type: type || "simple"
+    });
+  } catch (error) {
+    console.error("Test email error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to send test email",
+      error: error.message,
+      details: "Check your AWS SES configuration and ensure the email address is verified in AWS SES"
+    });
   }
 };
 

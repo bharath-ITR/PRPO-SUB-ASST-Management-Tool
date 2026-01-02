@@ -14,7 +14,8 @@ import {
   resumeSubscription,
   updateDescription,
   deleteSubscriptionFile,
-  updateSubscriptionFileDescription
+  updateSubscriptionFileDescription,
+  testEmail
 } from "../SubscriptionsControllers/subscription.controller.js";
 
 import { upload } from "../SubscriptionsMiddlewares/upload.middleware.js";
@@ -41,6 +42,9 @@ router.put("/:id/description", updateDescription);
 router.post("/:id/files", upload.single("file"), uploadSubscriptionFile);
 router.delete("/:id/files/:fileId", deleteSubscriptionFile);
 router.put("/:id/files/:fileId/description", updateSubscriptionFileDescription);
+
+// ✅ TEST EMAIL
+router.post("/test-email", testEmail);
 
 export default router;
 

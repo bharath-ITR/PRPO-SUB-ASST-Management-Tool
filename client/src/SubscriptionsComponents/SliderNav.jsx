@@ -1,6 +1,6 @@
 export default function SliderNav({ active, setActive }) {
   return (
-    <div className="flex bg-gray-200 rounded-full p-1 w-72 mb-4 my-11">
+    <div className="flex bg-gray-200 rounded-full p-1 w-72 mb-4 my-11 mx-auto">
       {["Subscriptions", "Assets"].map(tab => (
         <button
           key={tab}

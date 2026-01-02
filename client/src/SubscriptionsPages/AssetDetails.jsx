@@ -170,10 +170,13 @@ export default function AssetDetails() {
 
           <button
             onClick={() => setShowExtend(true)}
-            className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg shadow hover:bg-blue-700 w-full sm:w-auto inline-flex items-center gap-2"
+            className="group relative px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm font-medium inline-flex items-center gap-2 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 overflow-hidden w-full sm:w-auto"
           >
-            <FiPlus />
-            Extend Warranty
+            <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+            <span className="relative z-10 flex items-center gap-2">
+              <FiPlus className="transition-transform duration-200 group-hover:rotate-90" />
+              Extend Warranty
+            </span>
           </button>
         </div>
 
@@ -220,10 +223,13 @@ export default function AssetDetails() {
           <button
             onClick={saveDescription}
             disabled={savingDesc}
-            className="px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-800 disabled:opacity-50 inline-flex items-center gap-2"
+            className="group relative px-5 py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-xl text-sm font-medium inline-flex items-center gap-2 shadow-lg shadow-gray-900/30 hover:shadow-xl hover:shadow-gray-900/40 hover:from-gray-900 hover:to-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 overflow-hidden"
           >
-            <FiEdit3 />
-            {savingDesc ? "Saving..." : "Save Description"}
+            <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+            <span className="relative z-10 flex items-center gap-2">
+              <FiEdit3 className="transition-transform duration-200 group-hover:scale-110" />
+              {savingDesc ? "Saving..." : "Save Description"}
+            </span>
           </button>
         </div>
       </div>
@@ -236,8 +242,8 @@ export default function AssetDetails() {
         </h2>
 
         <div className="flex flex-wrap items-center gap-4 mb-4">
-          <label className="inline-flex items-center gap-2 px-4 py-2 border rounded-lg text-sm cursor-pointer bg-gray-50 hover:bg-gray-100">
-            <FiUploadCloud />
+          <label className="inline-flex items-center gap-2 px-5 py-2.5 border-2 border-dashed border-gray-300 rounded-xl text-sm font-medium cursor-pointer bg-gradient-to-br from-gray-50 to-white hover:from-blue-50 hover:to-white hover:border-blue-400 hover:text-blue-600 transition-all duration-200 shadow-sm hover:shadow-md">
+            <FiUploadCloud className="text-base" />
             <span>Choose file</span>
             <input
               type="file"
@@ -249,9 +255,10 @@ export default function AssetDetails() {
           <button
             onClick={handleUpload}
             disabled={!file || uploading}
-            className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg disabled:opacity-50"
+            className="group relative px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm font-medium inline-flex items-center gap-2 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 overflow-hidden"
           >
-            {uploading ? "Uploading..." : "Upload File"}
+            <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+            <span className="relative z-10">{uploading ? "Uploading..." : "Upload File"}</span>
           </button>
 
           {file && (
@@ -315,7 +322,7 @@ export default function AssetDetails() {
 
                   <button
                     onClick={() => setDeleteTarget({ filename: f.filename, name: f.originalName })}
-                    className="absolute top-2 right-2 text-red-600 hover:text-red-700 transition-colors"
+                    className="absolute top-2 right-2 px-2.5 py-1 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-150 border border-red-200 hover:border-red-300 hover:shadow-sm"
                     title="Delete file"
                   >
                     <FiTrash2 className="text-sm" />

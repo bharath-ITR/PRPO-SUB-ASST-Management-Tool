@@ -1,6 +1,7 @@
 import Asset from "../SubscriptionsModels/Asset.js";
 import fs from "fs";
 import path from "path";
+import { sendAssetWarrantyExtensionNotification } from "../SubscriptionsServices/email.service.js";
 
 
 export const getAllAssets = async (req, res, next) => {
@@ -156,7 +157,15 @@ export const extendAssetWarranty = async (req, res, next) => {
     });
 
     await asset.save();
-
+    
+    // Send email notification
+    try {
+      await sendAssetWarrantyExtensionNotification(asset, months);
+    } catch (emailError) {
+      console.error("Failed to send warranty extension email:", emailError);
+      // Don't fail the request if email fails
+    }
+    
     res.json(asset);
   } catch (err) {
     next(err);

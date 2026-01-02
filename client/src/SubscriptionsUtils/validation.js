@@ -26,6 +26,11 @@ export const validateSubscription = (form) => {
     }
   }
 
+  // Owner is required
+  if (!form.owner || !form.owner.email) {
+    errors.owner = "Owner is required";
+  }
+
   return {
     isValid: Object.keys(errors).length === 0,
     errors

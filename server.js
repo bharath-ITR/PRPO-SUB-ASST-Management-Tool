@@ -151,6 +151,7 @@ import RejectEmailToUser from "./Controllers/RejectEmailToUser.js";
 // Subscriptions Routes
 import subscriptionRoutes from "./SubscriptionsRoutes/subscription.routes.js";
 import assetRoutes from "./SubscriptionsRoutes/asset.routes.js";
+import { startReminderCron } from "./SubscriptionsServices/reminder.cron.js";
 import { errorHandler } from "./SubscriptionsMiddlewares/error.middleware.js";
 
 const app = express();
@@ -639,6 +640,14 @@ const startServer = async () => {
 
     app.listen(PORT, () => {
       console.log(`Server listening on port ${PORT} ✅`);
+      
+      // Start reminder cron job for email notifications
+      try {
+        startReminderCron();
+        console.log("📧 Email reminder cron job started ✅");
+      } catch (error) {
+        console.error("❌ Failed to start reminder cron job:", error);
+      }
     });
   } catch (err) {
     console.error("Server failed to start ❌", err);

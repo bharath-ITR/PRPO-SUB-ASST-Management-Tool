@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { FiPlus, FiGrid, FiList } from "react-icons/fi";
 import { api } from "../SubscriptionsServices/api";
 import AssetCard from "../SubscriptionsComponents/AssetCard";
 import AssetTable from "../SubscriptionsComponents/AssetTable";
@@ -171,34 +172,42 @@ const handleAddSubmit = async () => {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <button
             onClick={() => setShowAdd(true)}
-            className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg w-full sm:w-auto"
+            className="group relative px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm font-medium inline-flex items-center gap-2 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 overflow-hidden w-full sm:w-auto"
           >
-            + Add Asset
+            <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+            <span className="relative z-10 flex items-center gap-2">
+              <FiPlus className="transition-transform duration-200 group-hover:rotate-90" />
+              Add Asset
+            </span>
           </button>
 
-          <div className="flex border rounded-md overflow-hidden bg-white">
+          <div className="flex border-2 border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
             <button
               onClick={() => setView("card")}
-              className={`px-3 sm:px-4 py-1 text-xs sm:text-sm font-medium
-                ${view === "card"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-600"}
-              `}
+              className={`group relative px-4 py-2 text-sm font-medium inline-flex items-center gap-2 transition-all duration-200 ${
+                view === "card"
+                  ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              }`}
             >
+              <FiGrid className={`transition-transform duration-200 ${view === "card" ? "scale-110" : "group-hover:scale-110"}`} />
               Cards
             </button>
 
+            <div className="w-px bg-gray-200"></div>
+
             <button
               onClick={() => setView("table")}
-              className={`px-3 sm:px-4 py-1 text-xs sm:text-sm font-medium
-                ${view === "table"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-600"}
-              `}
+              className={`group relative px-4 py-2 text-sm font-medium inline-flex items-center gap-2 transition-all duration-200 ${
+                view === "table"
+                  ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              }`}
             >
+              <FiList className={`transition-transform duration-200 ${view === "table" ? "scale-110" : "group-hover:scale-110"}`} />
               Table
             </button>
           </div>
@@ -216,7 +225,7 @@ const handleAddSubmit = async () => {
           placeholder="Search by asset name, type, or assignee..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-lg px-4 py-2 text-sm bg-white shadow-sm focus:outline-none"
+          className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
         />
       </div>
 
@@ -277,25 +286,28 @@ const handleAddSubmit = async () => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-end items-center gap-3 mt-8">
+        <div className="flex justify-end items-center gap-4 mt-8 text-sm">
           <button
             disabled={page === 1}
             onClick={() => setPage(p => p - 1)}
-            className="px-3 py-1 border rounded-md text-sm disabled:opacity-50"
+            className="group relative px-4 py-2 rounded-xl border-2 border-gray-300 bg-white hover:bg-gradient-to-r hover:from-gray-50 hover:to-white hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 font-medium text-gray-700 hover:text-gray-900 shadow-sm hover:shadow-md"
           >
-            Prev
+            <span className="relative z-10">Prev</span>
           </button>
 
-          <span className="text-sm text-gray-600">
-            Page {page} of {totalPages}
-          </span>
+          <div className="px-4 py-2 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 shadow-sm">
+            <span className="text-gray-600">
+              Page <span className="font-semibold text-gray-900">{page}</span> of{" "}
+              <span className="font-semibold text-gray-900">{totalPages}</span>
+            </span>
+          </div>
 
           <button
             disabled={page === totalPages}
             onClick={() => setPage(p => p + 1)}
-            className="px-3 py-1 border rounded-md text-sm disabled:opacity-50"
+            className="group relative px-4 py-2 rounded-xl border-2 border-gray-300 bg-white hover:bg-gradient-to-r hover:from-gray-50 hover:to-white hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 font-medium text-gray-700 hover:text-gray-900 shadow-sm hover:shadow-md"
           >
-            Next
+            <span className="relative z-10">Next</span>
           </button>
         </div>
       )}

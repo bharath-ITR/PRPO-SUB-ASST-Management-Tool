@@ -68,14 +68,15 @@ export default function RenewSubscriptionModal({
         </div>
 
         <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
-          <button onClick={onClose} className="border px-4 py-2 rounded text-sm w-full sm:w-auto">
-            Cancel
+          <button onClick={onClose} className="group relative px-5 py-2.5 rounded-xl border-2 border-gray-300 bg-white hover:bg-gradient-to-r hover:from-gray-50 hover:to-white hover:border-gray-400 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 font-medium text-sm text-gray-700 hover:text-gray-900 shadow-sm hover:shadow-md w-full sm:w-auto">
+            <span className="relative z-10">Cancel</span>
           </button>
           <button
             onClick={handleConfirm}
-            className="bg-blue-600 text-white px-4 py-2 rounded text-sm w-full sm:w-auto"
+            className="group relative px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm font-medium shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 overflow-hidden w-full sm:w-auto"
           >
-            Renew
+            <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+            <span className="relative z-10">Renew</span>
           </button>
         </div>
       </div>
