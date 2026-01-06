@@ -26,9 +26,11 @@ export const validateSubscription = (form) => {
     }
   }
 
-  // Owner is required
-  if (!form.owner || !form.owner.email) {
-    errors.owner = "Owner is required";
+  // Owners: at least one required
+  const owners = form.owners || [];
+  const hasValidOwner = Array.isArray(owners) && owners.some(o => o?.email);
+  if (!hasValidOwner) {
+    errors.owners = "At least one owner is required";
   }
 
   return {

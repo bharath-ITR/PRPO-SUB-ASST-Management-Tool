@@ -1,26 +1,26 @@
 export const reporting_Manager = [
   //  {name:'Manisha Sharma',email:'manisha.sharma@itradiant.com'},
-  // {name:'Sai Teja Goli',email:'golisai.teja@itradiant.com'},
+  {name:'Sai Teja Goli',email:'golisai.teja@itradiant.com'},
 
   //  {name:'Vivek Khandelwal',email:'vivek.khandelwal@itradiant.com'},
-  { name: "Lavina Lalwani", email: "lavina.l@itradiant.com" },
+  // { name: "Lavina Lalwani", email: "lavina.l@itradiant.com" },
   //   {name:'Pulkit Bopche',email:'pulkit.bopche@itradiant.com'},
   //   {name:'Rachna Bagaria',email:'rachna@itradiant.com'},
   //   {name:'Srikanth Myneni',email:'srikanth.myneni@itradiant.com'},
   /* {name:'Neeraj Maurya',email:'Neeraj.maurya@itradiant.com'}, */
 ];
 export const Finance = [
-  { name: "Lavina Lalwani", email: "lavina.l@itradiant.com" },
+  // { name: "Lavina Lalwani", email: "lavina.l@itradiant.com" },
   // {name:'Deepsmita Khadanga',email:'deepsmita.khadanga@itradiant.com'},
-  // {name:'Sai Teja Goli',email:'golisai.teja@itradiant.com'},
+  {name:'Sai Teja Goli',email:'golisai.teja@itradiant.com'},
 
   /* {name:'Neeraj Maurya',email:'Neeraj.maurya@itradiant.com'}, */
 ];
 
 export const Higher_authority = [
-  { name: "KC Sahu", email: "kcsahu@itradiant.com" },
+  // { name: "KC Sahu", email: "kcsahu@itradiant.com" },
   //       {name:'Neeraj Maurya - [d]',email:'deepsmita878@gmail.com'},
-  // {name:'Sai Teja Goli',email:'golisai.teja@itradiant.com'},
+  {name:'Sai Teja Goli',email:'golisai.teja@itradiant.com'},
 
   /* {name:'Neeraj Maurya',email:'Neeraj.maurya@itradiant.com'}, */
   /*{name:'Pulkit Bopche',email:'pulkit.bopche@itradiant.com'},

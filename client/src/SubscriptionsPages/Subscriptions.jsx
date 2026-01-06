@@ -64,7 +64,7 @@ const [newSub, setNewSub] = useState({
   cost: "",
   costCurrency: "₹",
   dueDate: "",
-  owner: null
+  owners: []
 });
 
 
@@ -72,7 +72,13 @@ const [newSub, setNewSub] = useState({
 
   // ---------------- FETCH ----------------
   useEffect(() => {
-    api.get("/subscriptions").then(res => setSubs(res.data));
+    api.get("/subscriptions").then(res => {
+      const normalized = res.data.map(s => ({
+        ...s,
+        owners: s.owners?.length ? s.owners : (s.owner ? [s.owner] : [])
+      }));
+      setSubs(normalized);
+    });
   }, []);
 
   // ---------------- KPI CALC ----------------
@@ -80,7 +86,7 @@ const [newSub, setNewSub] = useState({
     // let totalCost = 0;
     let expired = 0;
     let expiringSoon = 0;
-    let expiringThisMonth = 0;
+    let upcoming = 0
 
     const today = new Date();
     const m = today.getMonth();
@@ -93,13 +99,11 @@ const [newSub, setNewSub] = useState({
       // totalCost += Number(s.cost || 0);
       if (status.label === "Expired") expired++;
       if (status.label === "Expiring Soon") expiringSoon++;
+if (status.label === "Upcoming") upcoming++;
 
-      if (due.getMonth() === m && due.getFullYear() === y) {
-        expiringThisMonth++;
-      }
     });
 
-    return { expired, expiringSoon, expiringThisMonth };
+    return { expired, expiringSoon, upcoming };
   }, [subs]);
 
 
@@ -191,7 +195,11 @@ const [newSub, setNewSub] = useState({
   };
 
 const handleEdit = (sub) => {
-  setSelectedSub({ costCurrency: "₹", ...sub });
+  setSelectedSub({ 
+    costCurrency: "₹", 
+    ...sub, 
+    owners: sub.owners?.length ? sub.owners : (sub.owner ? [sub.owner] : [])
+  });
 };
 
 const handleChange = (e) => {
@@ -229,7 +237,12 @@ const handleAddSubmit = async () => {
       status: "ACTIVE"
     });
 
-    setSubs(prev => [res.data, ...prev]);
+    const normalized = {
+      ...res.data,
+      owners: res.data.owners?.length ? res.data.owners : (res.data.owner ? [res.data.owner] : [])
+    };
+
+    setSubs(prev => [normalized, ...prev]);
     setShowAdd(false);
     setNewSub({
       name: "",
@@ -237,7 +250,8 @@ const handleAddSubmit = async () => {
       billingCycle: "",
       cost: "",
       costCurrency: "₹",
-      dueDate: ""
+      dueDate: "",
+      owners: []
     });
 
     showToast("Subscription added successfully", "success");
@@ -306,8 +320,8 @@ const handleAddSubmit = async () => {
           {/* KPI Tiles */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <Kpi
-          title="Expiring This Month"
-          value={kpis.expiringThisMonth}
+          title="Upcoming"
+          value={kpis.upcoming}
           color="orange"
           icon={<FiCalendar />}
           onClick={() => handleKpiClick("upcoming")}
@@ -390,10 +404,10 @@ const handleAddSubmit = async () => {
           </button>
 
           <div className="px-4 py-2 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 shadow-sm">
-            <span className="text-gray-600">
+          <span className="text-gray-600">
               Page <span className="font-semibold text-gray-900">{page}</span> of{" "}
               <span className="font-semibold text-gray-900">{totalPages}</span>
-            </span>
+          </span>
           </div>
 
           <button

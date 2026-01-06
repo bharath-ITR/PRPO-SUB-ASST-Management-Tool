@@ -58,23 +58,30 @@ export const sendEmail = async (to, subject, htmlBody, textBody = null) => {
   }
 };
 
-/**
- * Send subscription renewal reminder email
- */
-export const sendSubscriptionRenewalReminder = async (
-  subscription,
-  daysLeft,
-  recipientEmails = null
-) => {
-  // Only send to owner - if no owner, don't send email
-  let recipients = recipientEmails;
-  if (!recipients && subscription.owner?.email) {
-    recipients = [subscription.owner.email];
+// Helpers: collect owners/emails (supports single owner fallback)
+const getOwnerList = (subscription) => {
+  return subscription?.owners?.length
+    ? subscription.owners
+    : (subscription?.owner ? [subscription.owner] : []);
+};
+
+const getOwnerEmails = (subscription) => {
+  return getOwnerList(subscription)
+    .filter((o) => o && o.email)
+    .map((o) => o.email);
+};
+
+// Greeting: if single owner, use their name/email; if multiple, use Team
+const getGreetingName = (subscription) => {
+  const owners = getOwnerList(subscription);
+  if (owners.length === 1) {
+    return owners[0].name || owners[0].email || "Team";
   }
-  if (!recipients || !subscription.owner?.email) {
-    console.log(`⚠️ Skipping email for subscription "${subscription.name}" - no owner assigned`);
-    return { success: false, message: "No owner assigned" };
-  }
+  return "Team";
+};
+
+// Build Outlook-friendly HTML for subscription renewal reminder
+const buildSubscriptionRenewalHtml = (subscription, daysLeft, greetingName) => {
   const dueDate = new Date(subscription.dueDate).toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -82,10 +89,9 @@ export const sendSubscriptionRenewalReminder = async (
     day: "numeric",
   });
 
-  const subject = `Subscription Renewal Reminder: ${subscription.name} - ${daysLeft} day(s) remaining`;
+  const subjectText = `Subscription Renewal Reminder: ${subscription.name} - ${daysLeft} day(s) remaining`;
 
-  // Outlook-compatible HTML email template
-  const htmlBody = `
+  const html = `
     <!DOCTYPE html>
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
     <head>
@@ -121,7 +127,7 @@ export const sendSubscriptionRenewalReminder = async (
               <!-- Content -->
               <tr>
                 <td style="padding: 30px 20px; background-color: #ffffff;">
-                  <p style="margin: 0 0 15px 0; font-size: 16px; color: #333333; line-height: 1.6;">Dear ${subscription.owner?.name || 'Team'},</p>
+                  <p style="margin: 0 0 15px 0; font-size: 16px; color: #333333; line-height: 1.6;">Dear ${greetingName},</p>
                   <p style="margin: 0 0 20px 0; font-size: 16px; color: #333333; line-height: 1.6;">This is a reminder that the following subscription is due for renewal:</p>
                   
                   <!-- Info Box -->
@@ -202,6 +208,36 @@ export const sendSubscriptionRenewalReminder = async (
     </html>
   `;
 
+  return { html, subjectText, dueDate };
+};
+
+/**
+ * Send subscription renewal reminder email
+ */
+export const sendSubscriptionRenewalReminder = async (
+  subscription,
+  daysLeft,
+  recipientEmails = null
+) => {
+  // Only send to owners - if none, don't send email
+  const owners = getOwnerList(subscription).filter((o) => o && o.email);
+  const ownerEmails = owners.map((o) => o.email);
+
+  const recipients = recipientEmails && recipientEmails.length
+    ? recipientEmails
+    : ownerEmails;
+
+  if (!recipients || !recipients.length) {
+    console.log(`⚠️ Skipping email for subscription "${subscription.name}" - no owners assigned`);
+    return { success: false, message: "No owners assigned" };
+  }
+
+  const { subjectText, dueDate } = buildSubscriptionRenewalHtml(
+    subscription,
+    daysLeft,
+    "Team"
+  );
+
   const textBody = `
 Subscription Renewal Reminder: ${subscription.name}
 
@@ -217,7 +253,42 @@ ${subscription.vendor ? `- Vendor: ${subscription.vendor}\n` : ""}- Billing Cycl
 Please review and take necessary action before the renewal date.
   `;
 
-  return await sendEmail(recipients, subject, htmlBody, textBody);
+  // If we have multiple owners and we're not forcing a specific recipient list,
+  // send a personalized email to each owner.
+  if (!recipientEmails && owners.length > 1) {
+    const sentTo = [];
+    for (const owner of owners) {
+      const greetingName = owner.name || owner.email || "Team";
+      const { html } = buildSubscriptionRenewalHtml(
+        subscription,
+        daysLeft,
+        greetingName
+      );
+      await sendEmail(owner.email, subjectText, html, textBody);
+      sentTo.push(owner.email);
+    }
+    return { success: true, recipients: sentTo };
+  }
+
+  // Single recipient (or explicit test recipient list) – personalize if possible
+  let greetingName = "Team";
+  if (recipients.length === 1) {
+    const match =
+      owners.find((o) => o.email === recipients[0]) || owners[0];
+    if (match) {
+      greetingName = match.name || match.email || "Team";
+    }
+  } else {
+    greetingName = getGreetingName(subscription);
+  }
+
+  const { html } = buildSubscriptionRenewalHtml(
+    subscription,
+    daysLeft,
+    greetingName
+  );
+
+  return await sendEmail(recipients, subjectText, html, textBody);
 };
 
 /**
@@ -368,45 +439,9 @@ Please review and consider extending the warranty if needed.
   return await sendEmail(recipients, subject, htmlBody, textBody);
 };
 
-/**
- * Send subscription action notification (renew, pause, resume, cancel)
- */
-export const sendSubscriptionActionNotification = async (
-  subscription,
-  action,
-  recipientEmails = null
-) => {
-  // Only send to owner - if no owner, don't send email
-  let recipients = recipientEmails;
-  if (!recipients && subscription.owner?.email) {
-    recipients = [subscription.owner.email];
-  }
-  if (!recipients || !subscription.owner?.email) {
-    console.log(`⚠️ Skipping email for subscription "${subscription.name}" - no owner assigned`);
-    return { success: false, message: "No owner assigned" };
-  }
-  
-  const actionLabels = {
-    renewed: "Renewed",
-    paused: "Paused",
-    resumed: "Resumed",
-    cancelled: "Cancelled",
-  };
-
-  const actionLabel = actionLabels[action.toLowerCase()] || action;
-  const subject = `Subscription ${actionLabel}: ${subscription.name}`;
-
-  const dueDate = subscription.dueDate
-    ? new Date(subscription.dueDate).toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "N/A";
-
-  // Outlook-compatible HTML email template
-  const htmlBody = `
+// Build Outlook-friendly HTML for subscription action notification
+const buildSubscriptionActionHtml = (subscription, actionLabel, dueDate, greetingName) => {
+  const html = `
     <!DOCTYPE html>
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
     <head>
@@ -442,7 +477,7 @@ export const sendSubscriptionActionNotification = async (
               <!-- Content -->
               <tr>
                 <td style="padding: 30px 20px; background-color: #ffffff;">
-                  <p style="margin: 0 0 15px 0; font-size: 16px; color: #333333; line-height: 1.6;">Dear ${subscription.owner?.name || 'Team'},</p>
+                  <p style="margin: 0 0 15px 0; font-size: 16px; color: #333333; line-height: 1.6;">Dear ${greetingName},</p>
                   <p style="margin: 0 0 20px 0; font-size: 16px; color: #333333; line-height: 1.6;">The following subscription has been <strong>${actionLabel.toLowerCase()}</strong>:</p>
                   
                   <!-- Info Box -->
@@ -520,6 +555,49 @@ export const sendSubscriptionActionNotification = async (
     </html>
   `;
 
+  return html;
+};
+
+/**
+ * Send subscription action notification (renew, pause, resume, cancel)
+ */
+export const sendSubscriptionActionNotification = async (
+  subscription,
+  action,
+  recipientEmails = null
+) => {
+  // Only send to owners - if none, don't send email
+  const owners = getOwnerList(subscription).filter((o) => o && o.email);
+  const ownerEmails = owners.map((o) => o.email);
+
+  const recipients = recipientEmails && recipientEmails.length
+    ? recipientEmails
+    : ownerEmails;
+
+  if (!recipients || !recipients.length) {
+    console.log(`⚠️ Skipping email for subscription "${subscription.name}" - no owners assigned`);
+    return { success: false, message: "No owners assigned" };
+  }
+
+  const actionLabels = {
+    renewed: "Renewed",
+    paused: "Paused",
+    resumed: "Resumed",
+    cancelled: "Cancelled",
+  };
+
+  const actionLabel = actionLabels[action.toLowerCase()] || action;
+  const subject = `Subscription ${actionLabel}: ${subscription.name}`;
+
+  const dueDate = subscription.dueDate
+    ? new Date(subscription.dueDate).toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "N/A";
+
   const textBody = `
 Subscription ${actionLabel}: ${subscription.name}
 
@@ -533,7 +611,44 @@ ${subscription.vendor ? `- Vendor: ${subscription.vendor}\n` : ""}- Billing Cycl
 - Status: ${subscription.status}
   `;
 
-  return await sendEmail(recipients, subject, htmlBody, textBody);
+  // If we have multiple owners and we're not forcing a specific recipient list,
+  // send a personalized email to each owner.
+  if (!recipientEmails && owners.length > 1) {
+    const sentTo = [];
+    for (const owner of owners) {
+      const greetingName = owner.name || owner.email || "Team";
+      const html = buildSubscriptionActionHtml(
+        subscription,
+        actionLabel,
+        dueDate,
+        greetingName
+      );
+      await sendEmail(owner.email, subject, html, textBody);
+      sentTo.push(owner.email);
+    }
+    return { success: true, recipients: sentTo };
+  }
+
+  // Single recipient (or explicit test recipient list) – personalize if possible
+  let greetingName = "Team";
+  if (recipients.length === 1) {
+    const match =
+      owners.find((o) => o.email === recipients[0]) || owners[0];
+    if (match) {
+      greetingName = match.name || match.email || "Team";
+    }
+  } else {
+    greetingName = getGreetingName(subscription);
+  }
+
+  const html = buildSubscriptionActionHtml(
+    subscription,
+    actionLabel,
+    dueDate,
+    greetingName
+  );
+
+  return await sendEmail(recipients, subject, html, textBody);
 };
 
 /**

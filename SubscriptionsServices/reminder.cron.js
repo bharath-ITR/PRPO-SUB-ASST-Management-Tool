@@ -36,7 +36,10 @@ const checkSubscriptionRenewals = async () => {
       dueDate: { $ne: null },
       status: "ACTIVE",
       notificationsEnabled: { $ne: false },
-      "owner.email": { $exists: true, $ne: null }
+      $or: [
+        { "owners.0.email": { $exists: true, $ne: null } },
+        { "owner.email": { $exists: true, $ne: null } }
+      ]
     });
 
     let remindersSent = 0;
@@ -45,8 +48,11 @@ const checkSubscriptionRenewals = async () => {
     for (const sub of subscriptions) {
       if (!sub.dueDate) continue;
       
-      // Skip if no owner assigned
-      if (!sub.owner || !sub.owner.email) {
+      // Skip if no owners assigned
+      const hasOwner =
+        (sub.owners && sub.owners.length > 0) ||
+        (sub.owner && sub.owner.email);
+      if (!hasOwner) {
         skippedNoOwner++;
         continue;
       }

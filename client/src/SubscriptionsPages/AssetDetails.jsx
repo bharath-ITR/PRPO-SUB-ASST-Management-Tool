@@ -175,7 +175,7 @@ export default function AssetDetails() {
             <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
             <span className="relative z-10 flex items-center gap-2">
               <FiPlus className="transition-transform duration-200 group-hover:rotate-90" />
-              Extend Warranty
+            Extend Warranty
             </span>
           </button>
         </div>
@@ -228,7 +228,7 @@ export default function AssetDetails() {
             <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
             <span className="relative z-10 flex items-center gap-2">
               <FiEdit3 className="transition-transform duration-200 group-hover:scale-110" />
-              {savingDesc ? "Saving..." : "Save Description"}
+            {savingDesc ? "Saving..." : "Save Description"}
             </span>
           </button>
         </div>

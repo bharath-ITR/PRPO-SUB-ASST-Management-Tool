@@ -78,7 +78,7 @@ export default function SubscriptionCard({ sub, onEdit, onDelete }) {
 
       {/* Content */}
       <div className="relative z-10">
-        {/* Header */}
+      {/* Header */}
         <motion.div 
           variants={contentVariants}
           className="mb-5"
@@ -86,19 +86,25 @@ export default function SubscriptionCard({ sub, onEdit, onDelete }) {
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
-                {sub.name}
-              </h3>
-              
+            {sub.name}
+          </h3>
+
               <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
                 <FiBriefcase className="text-gray-400 flex-shrink-0" />
                 <span className="truncate">{sub.vendor || "No vendor"}</span>
               </div>
-              {sub.owner && (
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <FiUser className="text-indigo-500 flex-shrink-0" />
-                  <span className="truncate font-medium">{sub.owner.name || sub.owner.email}</span>
-                </div>
-              )}
+              {(() => {
+                const owners = sub.owners?.length ? sub.owners : (sub.owner ? [sub.owner] : []);
+                if (!owners.length) return null;
+                const display = owners.slice(0, 2).map(o => o.name || o.email).join(", ");
+                const extra = owners.length > 2 ? ` +${owners.length - 2}` : "";
+                return (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <FiUser className="text-indigo-500 flex-shrink-0" />
+                    <span className="truncate font-medium">{display}{extra}</span>
+                  </div>
+                );
+              })()}
             </div>
 
             <motion.span
@@ -107,11 +113,11 @@ export default function SubscriptionCard({ sub, onEdit, onDelete }) {
               className={`px-3 py-1 rounded-full text-xs font-semibold border-2 flex-shrink-0 ${
                 badgeColors[expiry.color] || badgeColors.gray
               }`}
-            >
-              {expiry.label}
-              {expiry.daysLeft !== undefined && ` · ${expiry.daysLeft}d`}
+          >
+            {expiry.label}
+            {expiry.daysLeft !== undefined && ` · ${expiry.daysLeft}d`}
             </motion.span>
-          </div>
+        </div>
         </motion.div>
 
         {/* Info Cards */}
@@ -139,7 +145,7 @@ export default function SubscriptionCard({ sub, onEdit, onDelete }) {
             <div className="flex items-center gap-2 mb-1">
               <FiCalendar className="text-orange-500 text-sm" />
               <p className="text-xs text-gray-500 font-medium">Renewal</p>
-            </div>
+      </div>
             <p className="text-xs font-bold text-gray-900 line-clamp-1">
               {formatDate(sub.dueDate)}
             </p>
@@ -155,18 +161,18 @@ export default function SubscriptionCard({ sub, onEdit, onDelete }) {
             <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-3 border border-emerald-200">
               <div className="flex items-center gap-2">
                 <FiDollarSign className="text-emerald-600" />
-                <div>
+        <div>
                   <p className="text-xs text-emerald-700 font-medium">Cost</p>
                   <p className="text-sm font-bold text-emerald-900">
                     {sub.costCurrency || "₹"}{Number(sub.cost).toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </div>
+          </p>
+        </div>
+        </div>
+      </div>
           </motion.div>
         )}
 
-        {/* Actions */}
+      {/* Actions */}
         <motion.div 
           variants={contentVariants}
           className="flex items-center justify-between pt-4 border-t border-gray-200"
@@ -174,27 +180,27 @@ export default function SubscriptionCard({ sub, onEdit, onDelete }) {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(sub);
-            }}
+    onClick={(e) => {
+      e.stopPropagation();
+      onEdit(sub);
+    }}
             className="group/btn flex items-center gap-2 px-4 py-2 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all duration-200 border-2 border-blue-200 hover:border-blue-300 hover:shadow-md"
-          >
+  >
             <FiEdit3 className="transition-transform duration-200 group-hover/btn:rotate-12" />
-            Edit
+    Edit
           </motion.button>
 
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(sub._id);
-            }}
+    onClick={(e) => {
+      e.stopPropagation();
+      onDelete(sub._id);
+    }}
             className="group/btn flex items-center gap-2 px-4 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-all duration-200 border-2 border-red-200 hover:border-red-300 hover:shadow-md"
-          >
+  >
             <FiTrash2 className="transition-transform duration-200 group-hover/btn:scale-110" />
-            Delete
+    Delete
           </motion.button>
 
           <motion.div
@@ -205,7 +211,7 @@ export default function SubscriptionCard({ sub, onEdit, onDelete }) {
             <FiArrowRight className="text-sm transition-transform duration-200 group-hover:translate-x-1" />
           </motion.div>
         </motion.div>
-      </div>
+</div>
 
       {/* Decorative corner accent */}
       <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

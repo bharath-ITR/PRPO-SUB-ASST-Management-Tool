@@ -93,11 +93,6 @@ export default function SubscriptionDetails() {
             <FiXCircle className="text-rose-600" />
           )
       },
-      // {
-      //   label: "Owner",
-      //   value: sub.owner?.name || sub.owner?.email || "—",
-      //   icon: <FiUser className="text-indigo-600" />
-      // },
       {
         label: "Total Spend",
         value: `${sub.costCurrency || "₹"}${totalSpend.toLocaleString()}`,
@@ -106,13 +101,19 @@ export default function SubscriptionDetails() {
     ];
   }, [sub, totalSpend]);
 
+  const normalizeSub = (data) => ({
+    ...data,
+    owners: data.owners?.length ? data.owners : (data.owner ? [data.owner] : [])
+  });
+
   /* ---------------- FETCH ---------------- */
 
   const fetchData = async () => {
     try {
       const res = await api.get(`/subscriptions/${id}`);
-      setSub(res.data);
-      setDescription(res.data.description || "");
+      const normalized = normalizeSub(res.data);
+      setSub(normalized);
+      setDescription(normalized.description || "");
     } catch {
       showToast("Failed to load subscription", "error");
     } finally {
@@ -166,10 +167,10 @@ export default function SubscriptionDetails() {
 
   const handleCancel = async () => {
     try {
-      await api.post(`/subscriptions/${id}/cancel`);
-      showToast("Subscription cancelled", "success");
+    await api.post(`/subscriptions/${id}/cancel`);
+    showToast("Subscription cancelled", "success");
       setShowCancelConfirm(false);
-      fetchData();
+    fetchData();
     } catch {
       showToast("Failed to cancel subscription", "error");
     }
@@ -196,7 +197,7 @@ export default function SubscriptionDetails() {
 
     try {
       const res = await api.post(`/subscriptions/${id}/files`, formData);
-      setSub(res.data);
+      setSub(normalizeSub(res.data));
       setFile(null);
       setFileNote("");
       showToast("File uploaded", "success");
@@ -213,7 +214,7 @@ const handleDeleteFile = async (fileId) => {
       `/subscriptions/${id}/files/${fileId}`
     );
 
-    setSub(res.data);
+    setSub(normalizeSub(res.data));
     showToast("File deleted", "success");
   } catch {
     showToast("Delete failed", "error");
@@ -226,7 +227,7 @@ const handleDeleteFile = async (fileId) => {
         `/subscriptions/${id}/files/${fileId}/description`,
         { description: fileDescriptions[fileId] || "" }
       );
-      setSub(res.data);
+      setSub(normalizeSub(res.data));
       showToast("File notes updated", "success");
     } catch {
       showToast("Failed to update notes", "error");
@@ -272,13 +273,13 @@ const handleDeleteFile = async (fileId) => {
           scrollbar-color: #cbd5e1 #f1f5f9;
         }
       `}</style>
-      <motion.div
-        variants={pageAnim}
-        initial="hidden"
-        animate="visible"
-        transition={{ duration: 0.35 }}
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 bg-gray-50 min-h-screen"
-      >
+    <motion.div
+      variants={pageAnim}
+      initial="hidden"
+      animate="visible"
+      transition={{ duration: 0.35 }}
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 bg-gray-50 min-h-screen"
+    >
       {/* HEADER */}
       <div className="flex flex-col gap-4 mb-6 sm:mb-8 my-11">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-6">
@@ -293,16 +294,30 @@ const handleDeleteFile = async (fileId) => {
               </Badge>
             </div>
             <div className="flex flex-col gap-1">
-              <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-2">
-                <FiInfo className="text-gray-400" />
-                Vendor: {sub.vendor || "Not specified"}
-              </p>
-              {sub.owner && (
-                <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-2">
-                  <FiUser className="text-indigo-500" />
-                  Owner: {sub.owner.name || sub.owner.email}
-                </p>
-              )}
+            <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-2">
+              <FiInfo className="text-gray-400" />
+              Vendor: {sub.vendor || "Not specified"}
+            </p>
+              {(() => {
+                const owners = sub.owners?.length ? sub.owners : (sub.owner ? [sub.owner] : []);
+                if (!owners.length) return null;
+                return (
+                  <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-2 flex-wrap">
+                    <FiUser className="text-indigo-500" />
+                    <span className="font-medium">Owners:</span>
+                    <span className="flex flex-wrap gap-2">
+                      {owners.map((o) => (
+                        <span
+                          key={o.email}
+                          className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 text-[11px] sm:text-xs"
+                        >
+                          {o.name || o.email}
+                        </span>
+                      ))}
+                    </span>
+                  </p>
+                );
+              })()}
             </div>
           </div>
 
@@ -539,9 +554,9 @@ const handleDeleteFile = async (fileId) => {
             {sub.history?.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <FiClock className="text-4xl text-gray-300 mb-3" />
-                <p className="text-sm text-gray-500">
-                  No renewal history available.
-                </p>
+              <p className="text-sm text-gray-500">
+                No renewal history available.
+              </p>
               </div>
             ) : (
               <div className="relative max-h-[600px] overflow-y-auto pr-2 custom-scrollbar scroll-smooth">
@@ -550,10 +565,10 @@ const handleDeleteFile = async (fileId) => {
                   <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
                   
                   <div className="space-y-4 pb-2">
-                    {sub.history.map((h, idx) => (
-                      <motion.div
-                        key={idx}
-                        variants={sectionAnim}
+                {sub.history.map((h, idx) => (
+                  <motion.div
+                    key={idx}
+                    variants={sectionAnim}
                         className="relative pl-10"
                       >
                         {/* Timeline dot */}
@@ -571,10 +586,10 @@ const handleDeleteFile = async (fileId) => {
                               </div>
                               <div>
                                 <p className="font-semibold text-gray-900 text-sm">
-                                  {h.action || "Renewed"}
-                                </p>
+                        {h.action || "Renewed"}
+                      </p>
                                 <p className="text-xs text-gray-500 mt-0.5">
-                                  {formatDate(h.date)}
+                        {formatDate(h.date)}
                                 </p>
                               </div>
                             </div>
@@ -601,24 +616,24 @@ const handleDeleteFile = async (fileId) => {
                                   </p>
                                 </div>
                               </div>
-                            </div>
-                          )}
+                    </div>
+                      )}
 
                           {/* Cost */}
-                          {h.newCost && (
+                    {h.newCost && (
                             <div className="flex items-center gap-2 p-2.5 bg-emerald-50 rounded-lg border border-emerald-100">
                               <GiMoneyStack className="text-emerald-600 text-base flex-shrink-0" />
                               <div>
                                 <p className="text-xs text-emerald-700 font-medium">
                                   {h.costCurrency || "₹"}{Number(h.newCost).toLocaleString()}
-                                </p>
+                      </p>
                                 <p className="text-xs text-emerald-600">Renewal Cost</p>
                               </div>
                             </div>
-                          )}
+                    )}
                         </div>
-                      </motion.div>
-                    ))}
+                  </motion.div>
+                ))}
                   </div>
                 </div>
               </div>
@@ -721,9 +736,9 @@ const PrimaryBtn = ({ children, icon, ...p }) => (
     <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
     <span className="relative z-10 flex items-center gap-2">
       <span className="transition-transform duration-200 group-hover:rotate-180">
-        {icon}
+    {icon}
       </span>
-      {children}
+    {children}
     </span>
   </button>
 );
@@ -736,9 +751,9 @@ const SecondaryBtn = ({ children, icon, ...p }) => (
     <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
     <span className="relative z-10 flex items-center gap-2">
       <span className="transition-transform duration-200 group-hover:scale-110">
-        {icon}
+    {icon}
       </span>
-      {children}
+    {children}
     </span>
   </button>
 );
@@ -751,9 +766,9 @@ const WarningBtn = ({ children, icon, ...p }) => (
     <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
     <span className="relative z-10 flex items-center gap-2">
       <span className="transition-transform duration-200 group-hover:scale-110">
-        {icon}
+    {icon}
       </span>
-      {children}
+    {children}
     </span>
   </button>
 );
@@ -766,9 +781,9 @@ const DangerBtn = ({ children, icon, ...p }) => (
     <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
     <span className="relative z-10 flex items-center gap-2">
       <span className="transition-transform duration-200 group-hover:scale-110">
-        {icon}
+    {icon}
       </span>
-      {children}
+    {children}
     </span>
   </button>
 );

@@ -101,28 +101,23 @@ export default function EditSubscriptionModal({
     fetchUsers();
   }, []);
 
-  const handleOwnerChange = (e) => {
-    const selectedEmail = e.target.value;
-    const selectedUser = users.find(u => u.email === selectedEmail);
-    
-    if (selectedUser) {
-      onChange({
-        target: {
-          name: "owner",
-          value: {
-            email: selectedUser.email,
-            name: selectedUser.name
-          }
-        }
-      });
-    } else {
-      onChange({
-        target: {
-          name: "owner",
-          value: null
-        }
-      });
-    }
+  const handleOwnersToggle = (email) => {
+    const exists = (subscription.owners || []).some((o) => o.email === email);
+    const selectedUsers = exists
+      ? (subscription.owners || []).filter((o) => o.email !== email)
+      : [
+          ...(subscription.owners || []),
+          ...users
+            .filter((u) => u.email === email)
+            .map((u) => ({ email: u.email, name: u.name })),
+        ];
+
+    onChange({
+      target: {
+        name: "owners",
+        value: selectedUsers
+      }
+    });
   };
 
   const handleSubmit = () => {
@@ -164,8 +159,8 @@ export default function EditSubscriptionModal({
                   <FiTag className="text-base" />
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  Edit Subscription
-                </h2>
+          Edit Subscription
+        </h2>
               </div>
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
@@ -177,7 +172,7 @@ export default function EditSubscriptionModal({
               </motion.button>
             </div>
 
-            <div className="space-y-3">
+        <div className="space-y-3">
               <motion.div
                 variants={fieldVariants}
                 custom={0}
@@ -186,24 +181,24 @@ export default function EditSubscriptionModal({
               >
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700 mb-1.5">
                   <FiTag className="text-blue-500 text-sm" />
-                  Subscription Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="name"
-                  value={subscription.name}
-                  onChange={(e) => {
-                    onChange(e);
-                    if (errors.name) setErrors({ ...errors, name: "" });
-                  }}
-                  placeholder="Enter subscription name"
+              Subscription Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="name"
+              value={subscription.name}
+              onChange={(e) => {
+                onChange(e);
+                if (errors.name) setErrors({ ...errors, name: "" });
+              }}
+              placeholder="Enter subscription name"
                   className={`w-full border-2 rounded-lg px-3 py-2 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                     errors.name 
                       ? "border-red-500 bg-red-50" 
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
-                />
+            />
                 <AnimatePresence>
-                  {errors.name && (
+            {errors.name && (
                     <motion.p
                       variants={errorVariants}
                       initial="hidden"
@@ -213,7 +208,7 @@ export default function EditSubscriptionModal({
                     >
                       {errors.name}
                     </motion.p>
-                  )}
+            )}
                 </AnimatePresence>
               </motion.div>
 
@@ -225,15 +220,15 @@ export default function EditSubscriptionModal({
               >
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700 mb-1.5">
                   <FiBriefcase className="text-purple-500 text-sm" />
-                  Vendor
-                </label>
-                <input
-                  name="vendor"
-                  value={subscription.vendor}
-                  onChange={onChange}
-                  placeholder="Enter vendor name"
+              Vendor
+            </label>
+            <input
+              name="vendor"
+              value={subscription.vendor}
+              onChange={onChange}
+              placeholder="Enter vendor name"
                   className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200"
-                />
+            />
               </motion.div>
 
               <motion.div
@@ -244,41 +239,41 @@ export default function EditSubscriptionModal({
               >
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700 mb-1.5">
                   <FiDollarSign className="text-emerald-500 text-sm" />
-                  Cost <span className="text-red-500">*</span>
-                </label>
-                <div className="flex gap-2">
-                  <select
-                    name="costCurrency"
-                    value={subscription.costCurrency}
-                    onChange={onChange}
+              Cost <span className="text-red-500">*</span>
+            </label>
+            <div className="flex gap-2">
+              <select
+                name="costCurrency"
+                value={subscription.costCurrency}
+                onChange={onChange}
                     className="border-2 border-gray-200 rounded-lg px-2.5 py-2 text-sm bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
-                    aria-label="Currency"
-                  >
-                    <option value="₹">₹</option>
-                    <option value="$">$</option>
-                    <option value="€">€</option>
-                  </select>
+                aria-label="Currency"
+              >
+                <option value="₹">₹</option>
+                <option value="$">$</option>
+                <option value="€">€</option>
+              </select>
 
-                  <input
-                    name="cost"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={subscription.cost}
-                    onChange={(e) => {
-                      onChange(e);
-                      if (errors.cost) setErrors({ ...errors, cost: "" });
-                    }}
-                    placeholder="Enter cost"
+              <input
+                name="cost"
+                type="number"
+                min="0"
+                step="0.01"
+                value={subscription.cost}
+                onChange={(e) => {
+                  onChange(e);
+                  if (errors.cost) setErrors({ ...errors, cost: "" });
+                }}
+                placeholder="Enter cost"
                     className={`flex-1 border-2 rounded-lg px-3 py-2 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 ${
                       errors.cost 
                         ? "border-red-500 bg-red-50" 
                         : "border-gray-200 bg-white hover:border-gray-300"
                     }`}
-                  />
-                </div>
+              />
+            </div>
                 <AnimatePresence>
-                  {errors.cost && (
+            {errors.cost && (
                     <motion.p
                       variants={errorVariants}
                       initial="hidden"
@@ -288,7 +283,7 @@ export default function EditSubscriptionModal({
                     >
                       {errors.cost}
                     </motion.p>
-                  )}
+            )}
                 </AnimatePresence>
               </motion.div>
 
@@ -300,24 +295,24 @@ export default function EditSubscriptionModal({
               >
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700 mb-1.5">
                   <FiRefreshCcw className="text-green-500 text-sm" />
-                  Billing Cycle <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="billingCycle"
-                  value={subscription.billingCycle}
-                  onChange={(e) => {
-                    onChange(e);
-                    if (errors.billingCycle) setErrors({ ...errors, billingCycle: "" });
-                  }}
-                  placeholder="Enter billing cycle"
+              Billing Cycle <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="billingCycle"
+              value={subscription.billingCycle}
+              onChange={(e) => {
+                onChange(e);
+                if (errors.billingCycle) setErrors({ ...errors, billingCycle: "" });
+              }}
+              placeholder="Enter billing cycle"
                   className={`w-full border-2 rounded-lg px-3 py-2 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.billingCycle 
                       ? "border-red-500 bg-red-50" 
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
-                />
+            />
                 <AnimatePresence>
-                  {errors.billingCycle && (
+            {errors.billingCycle && (
                     <motion.p
                       variants={errorVariants}
                       initial="hidden"
@@ -327,7 +322,7 @@ export default function EditSubscriptionModal({
                     >
                       {errors.billingCycle}
                     </motion.p>
-                  )}
+            )}
                 </AnimatePresence>
               </motion.div>
 
@@ -339,24 +334,24 @@ export default function EditSubscriptionModal({
               >
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700 mb-1.5">
                   <FiCalendar className="text-orange-500 text-sm" />
-                  Next Renewal Date <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="dueDate"
-                  type="date"
-                  value={subscription.dueDate}
-                  onChange={(e) => {
-                    onChange(e);
-                    if (errors.dueDate) setErrors({ ...errors, dueDate: "" });
-                  }}
+              Next Renewal Date <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="dueDate"
+              type="date"
+              value={subscription.dueDate}
+              onChange={(e) => {
+                onChange(e);
+                if (errors.dueDate) setErrors({ ...errors, dueDate: "" });
+              }}
                   className={`w-full border-2 rounded-lg px-3 py-2 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
                     errors.dueDate 
                       ? "border-red-500 bg-red-50" 
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
-                />
+            />
                 <AnimatePresence>
-                  {errors.dueDate && (
+            {errors.dueDate && (
                     <motion.p
                       variants={errorVariants}
                       initial="hidden"
@@ -378,32 +373,45 @@ export default function EditSubscriptionModal({
               >
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700 mb-1.5">
                   <FiUser className="text-indigo-500 text-sm" />
-                  Owner <span className="text-red-500">*</span>
-                  <span className="text-xs text-gray-500 font-normal">(Email notifications will be sent to this user)</span>
+                  Owners <span className="text-red-500">*</span>
+                  <span className="text-xs text-gray-500 font-normal">(Email notifications will be sent to selected users)</span>
                 </label>
-                <select
-                  name="owner"
-                  value={subscription.owner?.email || ""}
-                  onChange={handleOwnerChange}
-                  disabled={loadingUsers}
-                  className={`w-full border-2 rounded-lg px-3 py-2 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed ${
-                    errors.owner 
-                      ? "border-red-500 bg-red-50" 
-                      : "border-gray-200 bg-white hover:border-gray-300"
-                  }`}
-                >
-                  <option value="">Select owner</option>
-                  {users.map((user) => (
-                    <option key={user._id} value={user.email}>
-                      {user.name} ({user.email})
-                    </option>
-                  ))}
-                </select>
-                {loadingUsers && (
-                  <p className="text-xs text-gray-500 mt-1">Loading users...</p>
-                )}
+                <div className={`border-2 rounded-lg px-3 py-2 ${errors.owners ? "border-red-500 bg-red-50" : "border-gray-200 bg-white"} ${loadingUsers ? "opacity-60 cursor-not-allowed" : ""}`}>
+                  <div className="flex flex-col gap-2 max-h-36 overflow-y-auto">
+                    {users.map((user) => {
+                      const checked = (subscription.owners || []).some(o => o.email === user.email);
+                      return (
+                        <label key={user._id || user.email} className="flex items-center gap-2 text-xs text-gray-700">
+                          <input
+                            type="checkbox"
+                            disabled={loadingUsers}
+                            checked={checked}
+                            onChange={() => handleOwnersToggle(user.email)}
+                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                          />
+                          <span className="truncate">{user.name} ({user.email})</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                  {loadingUsers && (
+                    <p className="text-xs text-gray-500 mt-1">Loading users...</p>
+                  )}
+                  {(subscription.owners || []).length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {(subscription.owners || []).map((owner) => (
+                        <span
+                          key={owner.email}
+                          className="px-2 py-1 text-xs rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100"
+                        >
+                          {owner.name || owner.email}
+                        </span>
+                      ))}
+                    </div>
+            )}
+          </div>
                 <AnimatePresence>
-                  {errors.owner && (
+                  {errors.owners && (
                     <motion.p
                       variants={errorVariants}
                       initial="hidden"
@@ -411,12 +419,12 @@ export default function EditSubscriptionModal({
                       exit="exit"
                       className="text-xs text-red-600 mt-1 font-medium"
                     >
-                      {errors.owner}
+                      {errors.owners}
                     </motion.p>
                   )}
                 </AnimatePresence>
               </motion.div>
-            </div>
+        </div>
 
             <motion.div 
               variants={fieldVariants}
@@ -436,17 +444,17 @@ export default function EditSubscriptionModal({
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={handleSubmit}
+            onClick={handleSubmit}
                 className="group relative px-5 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-xs font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:from-blue-700 hover:to-blue-800 transition-all duration-200 overflow-hidden w-full sm:w-auto"
-              >
+          >
                 <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
                 <span className="relative z-10 flex items-center gap-1.5 justify-center">
                   <FiSave className="text-sm" />
-                  Save
+            Save
                 </span>
               </motion.button>
             </motion.div>
-          </div>
+        </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>

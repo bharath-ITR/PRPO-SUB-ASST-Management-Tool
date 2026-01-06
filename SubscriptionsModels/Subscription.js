@@ -42,9 +42,20 @@ const subscriptionSchema = new mongoose.Schema(
     },
     dueDate: String,
     status: String,
+    // Backward compatible single owner
     owner: {
       email: String,
       name: String
+    },
+    // New: support multiple owners
+    owners: {
+      type: [
+        {
+          email: String,
+          name: String
+        }
+      ],
+      default: []
     },
     notes: String,
 

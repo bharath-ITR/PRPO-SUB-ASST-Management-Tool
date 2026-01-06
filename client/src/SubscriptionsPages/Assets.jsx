@@ -299,7 +299,7 @@ const handleAddSubmit = async () => {
             <span className="text-gray-600">
               Page <span className="font-semibold text-gray-900">{page}</span> of{" "}
               <span className="font-semibold text-gray-900">{totalPages}</span>
-            </span>
+          </span>
           </div>
 
           <button

@@ -121,8 +121,8 @@ export default function EditAssetModal({
                   <FiPackage className="text-base" />
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  Edit Asset
-                </h2>
+          Edit Asset
+        </h2>
               </div>
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
@@ -134,7 +134,7 @@ export default function EditAssetModal({
               </motion.button>
             </div>
 
-            <div className="space-y-3">
+        <div className="space-y-3">
               <motion.div
                 variants={fieldVariants}
                 custom={0}
@@ -143,24 +143,24 @@ export default function EditAssetModal({
               >
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700 mb-1.5">
                   <FiPackage className="text-purple-500 text-sm" />
-                  Asset Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="name"
-                  value={asset.name}
-                  onChange={(e) => {
-                    onChange(e);
-                    if (errors.name) setErrors({ ...errors, name: "" });
-                  }}
-                  placeholder="Enter asset name"
+              Asset Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="name"
+              value={asset.name}
+              onChange={(e) => {
+                onChange(e);
+                if (errors.name) setErrors({ ...errors, name: "" });
+              }}
+              placeholder="Enter asset name"
                   className={`w-full border-2 rounded-lg px-3 py-2 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 ${
                     errors.name 
                       ? "border-red-500 bg-red-50" 
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
-                />
+            />
                 <AnimatePresence>
-                  {errors.name && (
+            {errors.name && (
                     <motion.p
                       variants={errorVariants}
                       initial="hidden"
@@ -170,7 +170,7 @@ export default function EditAssetModal({
                     >
                       {errors.name}
                     </motion.p>
-                  )}
+            )}
                 </AnimatePresence>
               </motion.div>
 
@@ -182,24 +182,24 @@ export default function EditAssetModal({
               >
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700 mb-1.5">
                   <FiTag className="text-blue-500 text-sm" />
-                  Asset Type <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="type"
-                  value={asset.type}
-                  onChange={(e) => {
-                    onChange(e);
-                    if (errors.type) setErrors({ ...errors, type: "" });
-                  }}
-                  placeholder="Enter asset type"
+              Asset Type <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="type"
+              value={asset.type}
+              onChange={(e) => {
+                onChange(e);
+                if (errors.type) setErrors({ ...errors, type: "" });
+              }}
+              placeholder="Enter asset type"
                   className={`w-full border-2 rounded-lg px-3 py-2 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                     errors.type 
                       ? "border-red-500 bg-red-50" 
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
-                />
+            />
                 <AnimatePresence>
-                  {errors.type && (
+            {errors.type && (
                     <motion.p
                       variants={errorVariants}
                       initial="hidden"
@@ -209,7 +209,7 @@ export default function EditAssetModal({
                     >
                       {errors.type}
                     </motion.p>
-                  )}
+            )}
                 </AnimatePresence>
               </motion.div>
 
@@ -221,15 +221,15 @@ export default function EditAssetModal({
               >
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700 mb-1.5">
                   <FiUser className="text-emerald-500 text-sm" />
-                  Assigned To
-                </label>
-                <input
-                  name="assignedTo"
-                  value={asset.assignedTo || ""}
-                  onChange={onChange}
-                  placeholder="Enter assignee name"
+              Assigned To
+            </label>
+            <input
+              name="assignedTo"
+              value={asset.assignedTo || ""}
+              onChange={onChange}
+              placeholder="Enter assignee name"
                   className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
-                />
+            />
               </motion.div>
 
               <motion.div
@@ -240,24 +240,24 @@ export default function EditAssetModal({
               >
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-700 mb-1.5">
                   <FiCalendar className="text-orange-500 text-sm" />
-                  Warranty End Date
-                </label>
-                <input
-                  name="warrantyEnd"
-                  type="date"
-                  value={asset.warrantyEnd || ""}
-                  onChange={(e) => {
-                    onChange(e);
-                    if (errors.warrantyEnd) setErrors({ ...errors, warrantyEnd: "" });
-                  }}
+              Warranty End Date
+            </label>
+            <input
+              name="warrantyEnd"
+              type="date"
+              value={asset.warrantyEnd || ""}
+              onChange={(e) => {
+                onChange(e);
+                if (errors.warrantyEnd) setErrors({ ...errors, warrantyEnd: "" });
+              }}
                   className={`w-full border-2 rounded-lg px-3 py-2 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
                     errors.warrantyEnd 
                       ? "border-red-500 bg-red-50" 
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
-                />
+            />
                 <AnimatePresence>
-                  {errors.warrantyEnd && (
+            {errors.warrantyEnd && (
                     <motion.p
                       variants={errorVariants}
                       initial="hidden"
@@ -267,10 +267,10 @@ export default function EditAssetModal({
                     >
                       {errors.warrantyEnd}
                     </motion.p>
-                  )}
+            )}
                 </AnimatePresence>
               </motion.div>
-            </div>
+        </div>
 
             <motion.div 
               variants={fieldVariants}
@@ -290,17 +290,17 @@ export default function EditAssetModal({
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={handleSubmit}
+            onClick={handleSubmit}
                 className="group relative px-5 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg text-xs font-semibold shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 hover:from-purple-700 hover:to-purple-800 transition-all duration-200 overflow-hidden w-full sm:w-auto"
-              >
+          >
                 <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
                 <span className="relative z-10 flex items-center gap-1.5 justify-center">
                   <FiSave className="text-sm" />
-                  Save
+            Save
                 </span>
               </motion.button>
             </motion.div>
-          </div>
+        </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
