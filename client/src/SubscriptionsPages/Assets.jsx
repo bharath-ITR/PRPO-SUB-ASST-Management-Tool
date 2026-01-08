@@ -1,5 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
-import { FiPlus, FiGrid, FiList } from "react-icons/fi";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Legend
+} from "recharts";
+import { FiPlus, FiGrid, FiList, FiSearch } from "react-icons/fi";
 import { api } from "../SubscriptionsServices/api";
 import AssetCard from "../SubscriptionsComponents/AssetCard";
 import AssetTable from "../SubscriptionsComponents/AssetTable";
@@ -15,6 +30,8 @@ export default function Assets() {
 
   const [view, setView] = useState("card");
   const [search, setSearch] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [isFocused, setIsFocused] = useState(false);
 
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("name");
@@ -43,16 +60,22 @@ const [newAsset, setNewAsset] = useState({
 
   // ---------------- FILTER + SORT + SEARCH ----------------
   const processedAssets = useMemo(() => {
+    const q = search.trim().toLowerCase();
+
+    const fullTextMatch = (a) => {
+      if (!q) return true;
+      return [
+        a.name,
+        a.type,
+        a.assignedTo,
+        a.status
+      ]
+        .filter(Boolean)
+        .some(val => String(val).toLowerCase().includes(q));
+    };
+
     return [...assets]
-      .filter((a) => {
-        if (!search) return true;
-        const q = search.toLowerCase();
-        return (
-          a.name.toLowerCase().includes(q) ||
-          a.type?.toLowerCase().includes(q) ||
-          a.assignedTo?.toLowerCase().includes(q)
-        );
-      })
+      .filter(fullTextMatch)
       .filter((a) => {
         if (filter === "all") return true;
 
@@ -86,6 +109,104 @@ const [newAsset, setNewAsset] = useState({
         return 0;
       });
   }, [assets, search, filter, sort]);
+
+  // ---------------- ANALYTICS DATA ----------------
+  const { warrantyTimelineData, assetSpendingTrendData, costByVendorData } = useMemo(() => {
+    if (!assets || assets.length === 0) {
+      return { warrantyTimelineData: [], assetSpendingTrendData: [], costByVendorData: [] };
+    }
+
+    const byMonthWarranty = new Map();
+    const byMonthSpend = new Map();
+    const byVendor = new Map();
+
+    assets.forEach((a) => {
+      const end = a.warrantyEnd ? new Date(a.warrantyEnd) : null;
+      if (!end || Number.isNaN(end.getTime())) return;
+
+      const ymKey = `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, "0")}`;
+      const label = end.toLocaleString("default", { month: "short", year: "2-digit" });
+
+      // Warranty timeline (count)
+      if (!byMonthWarranty.has(ymKey)) {
+        byMonthWarranty.set(ymKey, { month: label, count: 0 });
+      }
+      byMonthWarranty.get(ymKey).count += 1;
+
+      // Asset spending trend (best-effort)
+      const cost = Number(a.cost || a.price || a.purchaseCost || 0);
+      if (!byMonthSpend.has(ymKey)) {
+        byMonthSpend.set(ymKey, { month: label, total: 0 });
+      }
+      if (cost > 0) {
+        byMonthSpend.get(ymKey).total += cost;
+      }
+
+      // Cost by vendor / type (best-effort)
+      const vendorKey = a.vendor || a.type || "Unknown";
+      if (cost > 0 && vendorKey) {
+        if (!byVendor.has(vendorKey)) {
+          byVendor.set(vendorKey, { label: vendorKey, total: 0 });
+        }
+        byVendor.get(vendorKey).total += cost;
+      }
+    });
+
+    const sortByMonthKey = (entries) =>
+      entries.sort((a, b) => (a.key > b.key ? 1 : -1)).map((x) => x.value);
+
+    const warrantyTimelineData = sortByMonthKey(
+      Array.from(byMonthWarranty.entries()).map(([key, value]) => ({ key, value }))
+    );
+
+    const assetSpendingTrendData = sortByMonthKey(
+      Array.from(byMonthSpend.entries()).map(([key, value]) => ({ key, value }))
+    );
+
+    const costByVendorData = Array.from(byVendor.values()).sort(
+      (a, b) => b.total - a.total
+    );
+
+    return { warrantyTimelineData, assetSpendingTrendData, costByVendorData };
+  }, [assets]);
+
+  // ---------------- SEARCH SUGGESTIONS ----------------
+  useEffect(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) {
+      setSuggestions([]);
+      return;
+    }
+
+    const pool = assets.slice(0, 100);
+
+    const nameMatches = new Set();
+    const typeMatches = new Set();
+    const assignedMatches = new Set();
+
+    pool.forEach((a) => {
+      if (a.name?.toLowerCase().includes(q)) nameMatches.add(a.name);
+      if (a.type?.toLowerCase().includes(q)) typeMatches.add(a.type);
+      if (a.assignedTo?.toLowerCase().includes(q)) assignedMatches.add(a.assignedTo);
+    });
+
+    const toItems = (set, type) =>
+      Array.from(set).slice(0, 5).map((label) => ({ type, label }));
+
+    const next = [
+      ...toItems(nameMatches, "Name"),
+      ...toItems(typeMatches, "Type"),
+      ...toItems(assignedMatches, "Assignee")
+    ].slice(0, 10);
+
+    setSuggestions(next);
+  }, [search, assets]);
+
+  const applySuggestion = (label) => {
+    setSearch(label);
+    setSuggestions([]);
+    setPage(1);
+  };
 
   // ---------------- PAGINATION ----------------
   const totalPages = Math.ceil(processedAssets.length / PAGE_SIZE);
@@ -214,19 +335,162 @@ const handleAddSubmit = async () => {
         </div>
       </div>
 
+      {/* Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        {/* Warranty Expiration Timeline */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+          <div className="mb-3">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Warranty Expiration Timeline
+            </p>
+            <p className="text-sm text-gray-500">
+              Count of assets whose warranty ends by month
+            </p>
+          </div>
+          <div className="h-48">
+            {warrantyTimelineData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={warrantyTimelineData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
+                  <Tooltip />
+                  <Bar dataKey="count" radius={[6, 6, 0, 0]} fill="#22c55e" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-xs text-gray-400">
+                Not enough data to show warranty timeline.
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Asset Spending Trend (best-effort) */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+          <div className="mb-3">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Asset Spending Trend
+            </p>
+            <p className="text-sm text-gray-500">
+              Based on asset cost fields (if available)
+            </p>
+          </div>
+          <div className="h-48">
+            {assetSpendingTrendData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={assetSpendingTrendData}>
+                  <defs>
+                    <linearGradient id="assetSpending" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="total"
+                    stroke="#059669"
+                    fillOpacity={1}
+                    fill="url(#assetSpending)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-xs text-gray-400">
+                Not enough data to show asset spending trend.
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Cost by Vendor / Type (best-effort) */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+          <div className="mb-3">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Cost by Vendor / Type
+            </p>
+            <p className="text-sm text-gray-500">
+              Based on asset cost fields grouped by vendor or type
+            </p>
+          </div>
+          <div className="h-48 flex items-center justify-center">
+            {costByVendorData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={costByVendorData}
+                    dataKey="total"
+                    nameKey="label"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={40}
+                    outerRadius={70}
+                    paddingAngle={2}
+                  >
+                    {costByVendorData.map((entry, index) => {
+                      const colors = ["#6366f1", "#22c55e", "#f97316", "#14b8a6", "#e11d48", "#0ea5e9"];
+                      return (
+                        <Cell
+                          key={`asset-cell-${entry.label}-${index}`}
+                          fill={colors[index % colors.length]}
+                        />
+                      );
+                    })}
+                  </Pie>
+                  <Tooltip />
+                  <Legend layout="horizontal" verticalAlign="bottom" height={24} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-xs text-gray-400">
+                Not enough data to show cost breakdown by vendor/type.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Search */}
-      <div className="mb-4">
+      <div className="mb-4 relative">
         <label htmlFor="asset-search" className="block text-sm font-medium text-gray-700 mb-1.5">
           Search Assets
         </label>
-        <input
-          id="asset-search"
-          type="text"
-          placeholder="Search by asset name, type, or assignee..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
-        />
+        <div className="relative">
+          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+          <input
+            id="asset-search"
+            type="text"
+            placeholder="Full-text search by asset name, type, status, or assignee..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setTimeout(() => setIsFocused(false), 120)}
+            className="w-full border-2 border-gray-200 rounded-xl pl-9 pr-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
+            autoComplete="off"
+          />
+        </div>
+
+        {isFocused && suggestions.length > 0 && (
+          <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+            {suggestions.map((sug, idx) => (
+              <button
+                key={`${sug.type}-${sug.label}-${idx}`}
+                type="button"
+                onClick={() => applySuggestion(sug.label)}
+                className="w-full flex items-center gap-2 px-3 py-2 text-xs sm:text-sm text-left hover:bg-gray-50"
+              >
+                <span className="truncate">{sug.label}</span>
+                <span className="ml-auto text-[10px] uppercase tracking-wide text-gray-400">
+                  {sug.type}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Filter + Sort */}
